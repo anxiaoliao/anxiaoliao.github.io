@@ -1,0 +1,342 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Shell | Ming's Notes</title><meta name="author" content="Terry Ming"><meta name="copyright" content="Terry Ming"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Shell0、小技巧0.1 shell中$(( )) 与 $( ) 还有${ }的区别1. $()与&#96; &#96;123# 在多层次的复合替换中，&#96; &#96; 须要额外的跳脱( \&#96; )处理，而 $( ) 则比较直观command1 &#96;command2 \&#96;command3\&#96; &#96;command1 $(command2 $(command3))  2. ${ } 用来作变量替换详见1.6 变量的子串 3">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Shell">
+<meta property="og:url" content="https://anxiaoliao.github.io/2022/09/22/Shell/index.html">
+<meta property="og:site_name" content="Ming&#39;s Notes">
+<meta property="og:description" content="Shell0、小技巧0.1 shell中$(( )) 与 $( ) 还有${ }的区别1. $()与&#96; &#96;123# 在多层次的复合替换中，&#96; &#96; 须要额外的跳脱( \&#96; )处理，而 $( ) 则比较直观command1 &#96;command2 \&#96;command3\&#96; &#96;command1 $(command2 $(command3))  2. ${ } 用来作变量替换详见1.6 变量的子串 3">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+<meta property="article:published_time" content="2022-09-21T18:28:39.000Z">
+<meta property="article:modified_time" content="2022-09-22T13:19:42.144Z">
+<meta property="article:author" content="Terry Ming">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://anxiaoliao.github.io/2022/09/22/Shell/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Shell',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-09-22 21:19:42'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.2.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.imgtg.com/2022/08/11/AsLOl.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">9</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">1</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 留言板</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Ming's Notes</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 留言板</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Shell</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-09-21T18:28:39.000Z" title="发表于 2022-09-22 02:28:39">2022-09-22</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-09-22T13:19:42.144Z" title="更新于 2022-09-22 21:19:42">2022-09-22</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Shell"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="Shell"><a href="#Shell" class="headerlink" title="Shell"></a>Shell</h1><h2 id="0、小技巧"><a href="#0、小技巧" class="headerlink" title="0、小技巧"></a>0、小技巧</h2><h3 id="0-1-shell中-与-还有-的区别"><a href="#0-1-shell中-与-还有-的区别" class="headerlink" title="0.1 shell中$(( )) 与 $( ) 还有${ }的区别"></a>0.1 shell中$(( )) 与 $( ) 还有${ }的区别</h3><h4 id="1-与-96"><a href="#1-与-96" class="headerlink" title="1. $()与` &#96;"></a>1. $()与` &#96;</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在多层次的复合替换中，` ` 须要额外的跳脱( \` )处理，而 $( ) 则比较直观</span></span><br><span class="line">command1 `command2 \`command3\` `</span><br><span class="line">command1 $(command2 $(command3))</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-用来作变量替换"><a href="#2-用来作变量替换" class="headerlink" title="2. ${ } 用来作变量替换"></a>2. ${ } 用来作变量替换</h4><p>详见1.6 变量的子串</p>
+<h4 id="3-：它是用来作整数运算的"><a href="#3-：它是用来作整数运算的" class="headerlink" title="3. $(( )) ：它是用来作整数运算的"></a>3. $(( )) ：它是用来作整数运算的</h4><p>在 bash 中，$(( )) 的整数运算符号大致有这些：</p>
+<ul>
+<li>+ - * &#x2F; ：分别为 “加、减、乘、除”。</li>
+<li>% ：余数运算</li>
+<li>&amp; | ^ !：分别为 “AND、OR、XOR、NOT” 运算</li>
+</ul>
+<h2 id="1、基础篇"><a href="#1、基础篇" class="headerlink" title="1、基础篇"></a>1、基础篇</h2><p>Shell是一个命令解释器，它在操作系统的最外层，负责直接与用户对话，把用户的输入解释给操作系统，并处理各种各样的操作系统的输出结果，输出屏幕返回给用户。 </p>
+<p><strong>Shell脚本与php&#x2F;perl&#x2F;python语言的区别和优势？</strong></p>
+<p>shell脚本的优势在于处理操作系统底层的业务 （linux系统内部的应用都是shell脚本完成）因为有大量的linux系统命令为它做支撑。2000多个命令都是shell脚本编程的有力支撑，特别是grep、awk、sed等。例如：一键软件安装、优化、监控报警脚本，常规的业务应用，shell开发更简单快速，符合运维的简单、易用、高效原则.</p>
+<h3 id="1-1-系统中的shell"><a href="#1-1-系统中的shell" class="headerlink" title="1.1 系统中的shell"></a>1.1 系统中的shell</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看系统中的命解释器</span></span><br><span class="line">[root@hchost ~]<span class="comment"># cat /etc/shells </span></span><br><span class="line">/bin/sh</span><br><span class="line">/bin/bash</span><br><span class="line">/usr/bin/sh</span><br><span class="line">/usr/bin/bash</span><br><span class="line"><span class="comment"># 操作系统的默认shell</span></span><br><span class="line">[root@hchost ~]<span class="comment"># echo $SHELL</span></span><br><span class="line">/bin/bash</span><br><span class="line"></span><br><span class="line"><span class="comment"># bash版本</span></span><br><span class="line">[root@hchost ~]<span class="comment"># bash -version</span></span><br><span class="line">GNU bash, version 4.2.46(2)-release (x86_64-redhat-linux-gnu)</span><br><span class="line">Copyright (C) 2011 Free Software Foundation, Inc.</span><br><span class="line">License GPLv3+: GNU GPL version 3 or later &lt;http://gnu.org/licenses/gpl.html&gt;</span><br><span class="line"></span><br><span class="line">This is free software; you are free to change and redistribute it.</span><br><span class="line">There is NO WARRANTY, to the extent permitted by law.</span><br><span class="line"></span><br><span class="line"><span class="comment"># 升级当前的bash版本</span></span><br><span class="line">yum install update bash</span><br><span class="line"></span><br><span class="line"><span class="comment"># sh与bash 的关系</span></span><br><span class="line">[root@hchost ~]<span class="comment"># ll /bin/sh</span></span><br><span class="line">lrwxrwxrwx. 1 root root 4 Jul 11  2019 /bin/sh -&gt; bash</span><br><span class="line"><span class="comment"># /bin与 /user/bin 的关系</span></span><br><span class="line">[root@hchost ~]<span class="comment"># ll /bin</span></span><br><span class="line">lrwxrwxrwx. 1 root root 7 Jul 11  2019 /bin -&gt; usr/bin</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-2-脚本书写规范"><a href="#1-2-脚本书写规范" class="headerlink" title="1.2 脚本书写规范"></a>1.2 脚本书写规范</h3><h4 id="1-2-1-脚本统一存放目录"><a href="#1-2-1-脚本统一存放目录" class="headerlink" title="1.2.1 脚本统一存放目录"></a>1.2.1 脚本统一存放目录</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@hchost ~]<span class="comment"># mkdir -p /server/scripts</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="1-2-2-选择解释器"><a href="#1-2-2-选择解释器" class="headerlink" title="1.2.2 选择解释器"></a>1.2.2 选择解释器</h4><blockquote>
+<p><strong>其中开头的”#!”字符又称为幻数</strong></p>
+<p><strong>在执行bash脚本的时候，内核会根据”#!”后的解释器来确定该用那个程序解释这个脚本中的内容</strong> </p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@hchost init.d]<span class="comment"># head -1 /etc/init.d/*</span></span><br><span class="line">==&gt; /etc/init.d/aegis &lt;==</span><br><span class="line"><span class="comment">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">==&gt; /etc/init.d/functions &lt;==</span><br><span class="line"><span class="comment"># -*-Shell-script-*-</span></span><br><span class="line"></span><br><span class="line">==&gt; /etc/init.d/netconsole &lt;==</span><br><span class="line"><span class="comment">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">==&gt; /etc/init.d/network &lt;==</span><br><span class="line"><span class="comment">#! /bin/bash</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="1-2-3-生成开头的注释信息"><a href="#1-2-3-生成开头的注释信息" class="headerlink" title="1.2.3 生成开头的注释信息"></a>1.2.3 生成开头的注释信息</h4><p>使用 .vimrc 文件，能够快速的生成开头的注释信息</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">[root@hchost scripts]<span class="comment"># vi /etc/vimrc </span></span><br><span class="line"><span class="comment"># 在文件末尾添加</span></span><br><span class="line">autocmd BufNewFile *.py,*.cc,*.sh,*.java <span class="built_in">exec</span> <span class="string">&quot;:call SetTitle()&quot;</span></span><br><span class="line"></span><br><span class="line">func SetTitle()</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">expand</span>(<span class="string">&quot;%:e&quot;</span>) == <span class="string">&#x27;sh&#x27;</span></span><br><span class="line">        call setline(1,<span class="string">&quot;#!/bin/bash&quot;</span>)</span><br><span class="line">        call setline(2, <span class="string">&quot;##############################################################&quot;</span>)</span><br><span class="line">        call setline(3, <span class="string">&quot;# File Name: &quot;</span>.<span class="built_in">expand</span>(<span class="string">&quot;%&quot;</span>))</span><br><span class="line">        call setline(4, <span class="string">&quot;# Version: V1.0&quot;</span>)</span><br><span class="line">        call setline(5, <span class="string">&quot;# Author: HuangChao&quot;</span>)</span><br><span class="line">        call setline(6, <span class="string">&quot;# Created Time : &quot;</span>.strftime(<span class="string">&quot;%F %T&quot;</span>))</span><br><span class="line">        call setline(7, <span class="string">&quot;# Description:&quot;</span>)</span><br><span class="line">        call setline(8, <span class="string">&quot;##############################################################&quot;</span>)</span><br><span class="line">        call setline(9, <span class="string">&quot;&quot;</span>)</span><br><span class="line">    endif</span><br><span class="line">endfunc</span><br><span class="line"></span><br><span class="line"><span class="comment"># 效果</span></span><br><span class="line"><span class="comment">#!/bin/bash</span></span><br><span class="line"><span class="comment">##############################################################</span></span><br><span class="line"><span class="comment"># File Name: hc.sh</span></span><br><span class="line"><span class="comment"># Version: V1.0</span></span><br><span class="line"><span class="comment"># Author: HuangChao</span></span><br><span class="line"><span class="comment"># Created Time : 2020-09-10 11:20:08</span></span><br><span class="line"><span class="comment"># Description:</span></span><br><span class="line"><span class="comment">##############################################################</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>最好不用中文注释，因为在不同字符集的系统会出现乱码。(字符集为zh_CN.UTF-8,为中文)。</strong> </p>
+<h4 id="1-2-4-代码书写习惯"><a href="#1-2-4-代码书写习惯" class="headerlink" title="1.2.4 代码书写习惯"></a>1.2.4 代码书写习惯</h4><ul>
+<li><p>成对的内容一次性写出来，防止遗漏，如[ ]、’ ‘、” “等</p>
+</li>
+<li><p>[ ]两端要有空格，先输入[ ],退格，输入2个空格，再退格写。</p>
+</li>
+<li><p>流程控制语句一次书写完，再添加内容。(if 条件 ; then  内容;fi)</p>
+</li>
+<li><p>通过缩进让代码易读。</p>
+</li>
+<li><p>脚本中的引号都是英文状态下的引号，其他字符也是英文状态。</p>
+</li>
+</ul>
+<h3 id="1-3-shell脚本的执行"><a href="#1-3-shell脚本的执行" class="headerlink" title="1.3 shell脚本的执行"></a>1.3 shell脚本的执行</h3><h4 id="1-3-1-执行脚本的办法"><a href="#1-3-1-执行脚本的办法" class="headerlink" title="1.3.1 执行脚本的办法"></a>1.3.1 执行脚本的办法</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sh/bash   scripts.sh </span><br><span class="line"></span><br><span class="line"><span class="built_in">chown</span> +x   ./scripts.sh  &amp;&amp; ./scripts.sh  </span><br><span class="line"></span><br><span class="line"><span class="built_in">source</span> scripts.sh</span><br><span class="line"></span><br><span class="line">. (空格) scripts.sh</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>测试案例</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">[root@hchost scripts]<span class="comment"># cat hc.sh </span></span><br><span class="line"><span class="comment">#!/bin/bash</span></span><br><span class="line"><span class="comment">##############################################################</span></span><br><span class="line"><span class="comment"># File Name: hc.sh</span></span><br><span class="line"><span class="comment"># Version: V1.0</span></span><br><span class="line"><span class="comment"># Author: HuangChao</span></span><br><span class="line"><span class="comment"># Created Time : 2020-09-10 11:23:31</span></span><br><span class="line"><span class="comment"># Description:</span></span><br><span class="line"><span class="comment">##############################################################</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="built_in">pwd</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;hello hc &quot;</span></span><br><span class="line">ll</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;hello <span class="variable">$1</span>&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 没有执行权限时</span></span><br><span class="line"><span class="comment"># 两个执行结果一样</span></span><br><span class="line">[root@hchost scripts]<span class="comment"># . hc.sh </span></span><br><span class="line">/server/scripts</span><br><span class="line">hello hc </span><br><span class="line">total 4</span><br><span class="line">-rw-r--r-- 1 root root 287 Sep 10 11:24 hc.sh</span><br><span class="line">hello </span><br><span class="line">[root@hchost scripts]<span class="comment"># source hc.sh </span></span><br><span class="line">/server/scripts</span><br><span class="line">hello hc </span><br><span class="line">total 4</span><br><span class="line">-rw-r--r-- 1 root root 287 Sep 10 11:24 hc.sh</span><br><span class="line">hello </span><br><span class="line"></span><br><span class="line">sh/bash   hc.sh <span class="comment"># 部分命令不能识别</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 授权后 部分命令不能识别</span></span><br><span class="line">[root@hchost scripts]<span class="comment"># chmod +x hc.sh </span></span><br><span class="line">[root@hchost scripts]<span class="comment"># ./hc.sh </span></span><br><span class="line">/server/scripts</span><br><span class="line">hello hc </span><br><span class="line">./hc.sh: line 13: ll: <span class="built_in">command</span> not found</span><br><span class="line">hello </span><br><span class="line">[root@hchost scripts]<span class="comment"># sh hc.sh </span></span><br><span class="line">/server/scripts</span><br><span class="line">hello hc </span><br><span class="line">hc.sh: line 13: ll: <span class="built_in">command</span> not found</span><br><span class="line">hello </span><br><span class="line">[root@hcho</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-4-Shell的变量"><a href="#1-4-Shell的变量" class="headerlink" title="1.4 Shell的变量"></a>1.4 Shell的变量</h3><h4 id="1-4-1-什么是变量"><a href="#1-4-1-什么是变量" class="headerlink" title="1.4.1 什么是变量"></a>1.4.1 什么是变量</h4><ul>
+<li><p><strong>环境变量</strong></p>
+<p>也可称为<strong>全局变量</strong>，可以在创建他们的Shell及其派生出来的任意子进程shell中使用，环境变量又可分为自定义环境变量和Bash内置的环境变量</p>
+</li>
+<li><p><strong>普通变量</strong></p>
+<p>也可称为<strong>局部变量</strong>，只能在创建他们的Shell函数或Shell脚本中使用。普通变量一般是由开发者用户开发脚本程序时创建的。</p>
+</li>
+</ul>
+<h4 id="1-4-2-环境变量"><a href="#1-4-2-环境变量" class="headerlink" title="1.4.2 环境变量"></a>1.4.2 环境变量</h4><p> 使用 <strong>env&#x2F;declare&#x2F;set&#x2F;export -p</strong>  4个命令查看系统中的环境变量 </p>
+<h4 id="1-4-3-环境变量相关配置文件"><a href="#1-4-3-环境变量相关配置文件" class="headerlink" title="1.4.3 环境变量相关配置文件"></a>1.4.3 环境变量相关配置文件</h4><p> 四文件读取顺序（CentOS6和7都一样）</p>
+<p>① &#x2F;etc&#x2F;profile</p>
+<p>② ~&#x2F;.bash_profile</p>
+<p>③ ~&#x2F;.bashrc</p>
+<p>④ &#x2F;etc&#x2F;bashrc</p>
+<p><img src="/Shell.assets/1599724715697.png" alt="1599724715697"></p>
+<h4 id="1-4-4-环境变量的知识小结"><a href="#1-4-4-环境变量的知识小结" class="headerlink" title="1.4.4 环境变量的知识小结"></a>1.4.4 环境变量的知识小结</h4><ul>
+<li>变量名通常要大写。</li>
+<li>变量可以在自身的Shell及子Shell中使用。</li>
+<li>常用export来定义环境变量。</li>
+<li>执行env默认可以显示所有的环境变量名称及对应的值。</li>
+<li>输出时用“$变量名”，取消时用“unset 变量名”。</li>
+<li>书写crond定时任务时要注意，脚本要用到的环境变量最好先在所执行的Shell脚本中重新定义。</li>
+<li>如果希望环境变量永久生效，则可以将其放在用户环境变量文件或全局环境变量文件里。</li>
+<li>一般的变量定义、赋值常用双引号；简单连续的字符串可以不加引号；希望原样输出时使用单引号。 </li>
+<li>希望变量的内容是命令的解析结果时，要用反引号’’，或者用$()把命令括起来再赋值。</li>
+</ul>
+<h4 id="1-4-5-变量中引号的使用"><a href="#1-4-5-变量中引号的使用" class="headerlink" title="1.4.5 变量中引号的使用"></a>1.4.5 变量中引号的使用</h4><p>只有在变量的值中有空格的时候，会使用引号。</p>
+<p>单引号与双引号的区别在于，是否能够解析特殊符号。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@hchost scripts]<span class="comment"># hc=&#x27;this is $PWD&#x27;</span></span><br><span class="line">[root@hchost scripts]<span class="comment"># echo $hc</span></span><br><span class="line">this is <span class="variable">$PWD</span></span><br><span class="line">[root@hchost scripts]<span class="comment"># hc=&quot;this is $PWD&quot;</span></span><br><span class="line">[root@hchost scripts]<span class="comment"># echo $hc</span></span><br><span class="line">this is /server/scripts</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-5-特殊变量"><a href="#1-5-特殊变量" class="headerlink" title="1.5 特殊变量"></a>1.5 特殊变量</h3><h4 id="1-5-1-位置变量"><a href="#1-5-1-位置变量" class="headerlink" title="1.5.1 位置变量"></a>1.5.1 位置变量</h4><table>
+<thead>
+<tr>
+<th><strong>位置变量</strong></th>
+<th><strong>作用说明</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>$0</strong></td>
+<td>获取当前执行的shell脚本的文件名，如果执行脚本带路径那么就包括脚本路径。</td>
+</tr>
+<tr>
+<td><strong>$n</strong></td>
+<td>获取当前执行的shell脚本的第n个参数值，n&#x3D;1..9，当n为0时表示脚本的文件名，如果n大于9用大括号括起来{10}，参数以空格隔开。</td>
+</tr>
+<tr>
+<td><strong>$#</strong></td>
+<td>获取当前执行的shell脚本后面接的参数的总个数</td>
+</tr>
+<tr>
+<td><strong>$*</strong></td>
+<td>获取当前shell的所有传参的参数，不加引号同$@;如果给$*加上双引号，例如: “$*”,则表示将所有的参数视为单个字符串，相当于“112$3”。</td>
+</tr>
+<tr>
+<td><strong>$@</strong></td>
+<td>获取当前shell的所有传参的参数，不加引号同$*;如果给$@加上双引号，例如: “$@”,则表示将所有参数视为不同的独立字符串，相当于“$1” “$2” “$3” “……”，这是将参数传递给其他程序的最佳方式，因为他会保留所有内嵌在每个参数里的任何空白。</td>
+</tr>
+</tbody></table>
+<p> **&#x3D;&#x3D;当“$<em>”和“$@”都加双引号时，两者有区别，都不加双引号时，两者无区别&#x3D;&#x3D;</em>*</p>
+<h4 id="1-5-2-与-对比实践"><a href="#1-5-2-与-对比实践" class="headerlink" title="1.5.2 $* 与 $@ 对比实践"></a>1.5.2 <em>$*</em> <em>与 $@</em> <em>对比实践</em></h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">[root@hchost scripts]<span class="comment">#  set -- &quot;I am&quot; handsome boy..</span></span><br><span class="line">[root@hchost scripts]<span class="comment"># echo $0</span></span><br><span class="line">-bash</span><br><span class="line">[root@hchost scripts]<span class="comment"># echo $1</span></span><br><span class="line">I am</span><br><span class="line">[root@hchost scripts]<span class="comment"># echo $2</span></span><br><span class="line">handsome</span><br><span class="line">[root@hchost scripts]<span class="comment"># echo $3</span></span><br><span class="line">boy..</span><br><span class="line">[root@hchost scripts]<span class="comment"># echo $*</span></span><br><span class="line">I am handsome boy..</span><br><span class="line">[root@hchost scripts]<span class="comment"># echo $@</span></span><br><span class="line">I am handsome boy..</span><br><span class="line">[root@hchost scripts]<span class="comment"># for i in $*;do echo $i ;done</span></span><br><span class="line">I</span><br><span class="line">am</span><br><span class="line">handsome</span><br><span class="line">boy..</span><br><span class="line">[root@hchost scripts]<span class="comment"># for i in $@;do echo $i ;done</span></span><br><span class="line">I</span><br><span class="line">am</span><br><span class="line">handsome</span><br><span class="line">boy..</span><br><span class="line">[root@hchost scripts]<span class="comment"># for i in &quot;$*&quot;;do echo $i ;done</span></span><br><span class="line">I am handsome boy..</span><br><span class="line">[root@hchost scripts]<span class="comment"># for i in &quot;$@&quot;;do echo $i ;done</span></span><br><span class="line">I am</span><br><span class="line">handsome</span><br><span class="line">boy..</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-5-3-进程状态变量"><a href="#1-5-3-进程状态变量" class="headerlink" title="1.5.3 进程状态变量"></a>1.5.3 进程状态变量</h4><table>
+<thead>
+<tr>
+<th><strong>位置变量</strong></th>
+<th><strong>作用说明</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>$?</strong></td>
+<td>获取执行上一个指令的执行状态返回值（0为成功，非零为失败)，这个变量最常用</td>
+</tr>
+<tr>
+<td><strong>$$</strong></td>
+<td>获取当前执行的Shell脚本的进程号（PID)，这个变量不常用，了解即可</td>
+</tr>
+<tr>
+<td><strong>$!</strong></td>
+<td>获取上一个在后台工作的进程的进程号（PID)，这个变量不常用，了解即可</td>
+</tr>
+<tr>
+<td><strong>$_</strong></td>
+<td>获取在此之前执行的命令或脚本的最后一个参数，这个变量不常用，了解即可</td>
+</tr>
+</tbody></table>
+<h4 id="1-5-4-echo参数说明"><a href="#1-5-4-echo参数说明" class="headerlink" title="1.5.4 echo参数说明"></a>1.5.4 echo参数说明</h4><table>
+<thead>
+<tr>
+<th><strong>参数</strong></th>
+<th><strong>参数说明</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>-n</strong></td>
+<td>不要追加换行</td>
+</tr>
+<tr>
+<td><strong>-e</strong></td>
+<td>启用下列反斜杠转义的解释</td>
+</tr>
+<tr>
+<td><strong>-E</strong></td>
+<td>显式地抑制对于反斜杠转义的解释</td>
+</tr>
+<tr>
+<td><strong>&#96;echo’</strong> <strong>对下列反斜杠字符进行转义：</strong></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>\n</strong></td>
+<td>换行</td>
+</tr>
+<tr>
+<td><strong>\r</strong></td>
+<td>回车</td>
+</tr>
+<tr>
+<td><strong>\t</strong></td>
+<td>横向制表符</td>
+</tr>
+<tr>
+<td><strong>\b</strong></td>
+<td>退格</td>
+</tr>
+<tr>
+<td><strong>\v</strong></td>
+<td>纵向制表符</td>
+</tr>
+<tr>
+<td><strong>\c</strong></td>
+<td>抑制更多的输出</td>
+</tr>
+</tbody></table>
+<h3 id="1-6-变量的子串"><a href="#1-6-变量的子串" class="headerlink" title="1.6 变量的子串"></a>1.6 变量的子串</h3><h4 id="1-6-1-变量子串说明"><a href="#1-6-1-变量子串说明" class="headerlink" title="1.6.1 变量子串说明"></a>1.6.1 变量子串说明</h4><table>
+<thead>
+<tr>
+<th><strong>表达式</strong></th>
+<th><strong>说明</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>${parameter}</strong></td>
+<td>返回变量$parameter的内容</td>
+</tr>
+<tr>
+<td>**$</td>
+<td></td>
+</tr>
+</tbody></table>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://anxiaoliao.github.io">Terry Ming</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://anxiaoliao.github.io/2022/09/22/Shell/">https://anxiaoliao.github.io/2022/09/22/Shell/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://anxiaoliao.github.io" target="_blank">Ming's Notes</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2022/09/22/Mysql/"><img class="prev-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">MySQL</div></div></a></div><div class="next-post pull-right"><a href="/2022/09/21/Docker/"><img class="next-cover" src="https://i.imgtg.com/2022/09/22/gytPX.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Docker</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.imgtg.com/2022/08/11/AsLOl.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Terry Ming</div><div class="author-info__description">人到无求品自高</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">9</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">1</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Shell"><span class="toc-number">1.</span> <span class="toc-text">Shell</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0%E3%80%81%E5%B0%8F%E6%8A%80%E5%B7%A7"><span class="toc-number">1.1.</span> <span class="toc-text">0、小技巧</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0-1-shell%E4%B8%AD-%E4%B8%8E-%E8%BF%98%E6%9C%89-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.1.1.</span> <span class="toc-text">0.1 shell中$(( )) 与 $( ) 还有${ }的区别</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E4%B8%8E-96"><span class="toc-number">1.1.1.1.</span> <span class="toc-text">1. $()与&#96; &#96;</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E7%94%A8%E6%9D%A5%E4%BD%9C%E5%8F%98%E9%87%8F%E6%9B%BF%E6%8D%A2"><span class="toc-number">1.1.1.2.</span> <span class="toc-text">2. ${ } 用来作变量替换</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%EF%BC%9A%E5%AE%83%E6%98%AF%E7%94%A8%E6%9D%A5%E4%BD%9C%E6%95%B4%E6%95%B0%E8%BF%90%E7%AE%97%E7%9A%84"><span class="toc-number">1.1.1.3.</span> <span class="toc-text">3. $(( )) ：它是用来作整数运算的</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E3%80%81%E5%9F%BA%E7%A1%80%E7%AF%87"><span class="toc-number">1.2.</span> <span class="toc-text">1、基础篇</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E7%B3%BB%E7%BB%9F%E4%B8%AD%E7%9A%84shell"><span class="toc-number">1.2.1.</span> <span class="toc-text">1.1 系统中的shell</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E8%84%9A%E6%9C%AC%E4%B9%A6%E5%86%99%E8%A7%84%E8%8C%83"><span class="toc-number">1.2.2.</span> <span class="toc-text">1.2 脚本书写规范</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-1-%E8%84%9A%E6%9C%AC%E7%BB%9F%E4%B8%80%E5%AD%98%E6%94%BE%E7%9B%AE%E5%BD%95"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">1.2.1 脚本统一存放目录</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-2-%E9%80%89%E6%8B%A9%E8%A7%A3%E9%87%8A%E5%99%A8"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">1.2.2 选择解释器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-3-%E7%94%9F%E6%88%90%E5%BC%80%E5%A4%B4%E7%9A%84%E6%B3%A8%E9%87%8A%E4%BF%A1%E6%81%AF"><span class="toc-number">1.2.2.3.</span> <span class="toc-text">1.2.3 生成开头的注释信息</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-4-%E4%BB%A3%E7%A0%81%E4%B9%A6%E5%86%99%E4%B9%A0%E6%83%AF"><span class="toc-number">1.2.2.4.</span> <span class="toc-text">1.2.4 代码书写习惯</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-shell%E8%84%9A%E6%9C%AC%E7%9A%84%E6%89%A7%E8%A1%8C"><span class="toc-number">1.2.3.</span> <span class="toc-text">1.3 shell脚本的执行</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3-1-%E6%89%A7%E8%A1%8C%E8%84%9A%E6%9C%AC%E7%9A%84%E5%8A%9E%E6%B3%95"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">1.3.1 执行脚本的办法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-Shell%E7%9A%84%E5%8F%98%E9%87%8F"><span class="toc-number">1.2.4.</span> <span class="toc-text">1.4 Shell的变量</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-4-1-%E4%BB%80%E4%B9%88%E6%98%AF%E5%8F%98%E9%87%8F"><span class="toc-number">1.2.4.1.</span> <span class="toc-text">1.4.1 什么是变量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-4-2-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-number">1.2.4.2.</span> <span class="toc-text">1.4.2 环境变量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-4-3-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E7%9B%B8%E5%85%B3%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-number">1.2.4.3.</span> <span class="toc-text">1.4.3 环境变量相关配置文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-4-4-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E7%9A%84%E7%9F%A5%E8%AF%86%E5%B0%8F%E7%BB%93"><span class="toc-number">1.2.4.4.</span> <span class="toc-text">1.4.4 环境变量的知识小结</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-4-5-%E5%8F%98%E9%87%8F%E4%B8%AD%E5%BC%95%E5%8F%B7%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-number">1.2.4.5.</span> <span class="toc-text">1.4.5 变量中引号的使用</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-5-%E7%89%B9%E6%AE%8A%E5%8F%98%E9%87%8F"><span class="toc-number">1.2.5.</span> <span class="toc-text">1.5 特殊变量</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-5-1-%E4%BD%8D%E7%BD%AE%E5%8F%98%E9%87%8F"><span class="toc-number">1.2.5.1.</span> <span class="toc-text">1.5.1 位置变量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-5-2-%E4%B8%8E-%E5%AF%B9%E6%AF%94%E5%AE%9E%E8%B7%B5"><span class="toc-number">1.2.5.2.</span> <span class="toc-text">1.5.2 $* 与 $@ 对比实践</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-5-3-%E8%BF%9B%E7%A8%8B%E7%8A%B6%E6%80%81%E5%8F%98%E9%87%8F"><span class="toc-number">1.2.5.3.</span> <span class="toc-text">1.5.3 进程状态变量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-5-4-echo%E5%8F%82%E6%95%B0%E8%AF%B4%E6%98%8E"><span class="toc-number">1.2.5.4.</span> <span class="toc-text">1.5.4 echo参数说明</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-6-%E5%8F%98%E9%87%8F%E7%9A%84%E5%AD%90%E4%B8%B2"><span class="toc-number">1.2.6.</span> <span class="toc-text">1.6 变量的子串</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-6-1-%E5%8F%98%E9%87%8F%E5%AD%90%E4%B8%B2%E8%AF%B4%E6%98%8E"><span class="toc-number">1.2.6.1.</span> <span class="toc-text">1.6.1 变量子串说明</span></a></li></ol></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2022/09/22/Mysql/" title="MySQL"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="MySQL"/></a><div class="content"><a class="title" href="/2022/09/22/Mysql/" title="MySQL">MySQL</a><time datetime="2022-09-21T18:28:39.000Z" title="发表于 2022-09-22 02:28:39">2022-09-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/09/22/Shell/" title="Shell"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Shell"/></a><div class="content"><a class="title" href="/2022/09/22/Shell/" title="Shell">Shell</a><time datetime="2022-09-21T18:28:39.000Z" title="发表于 2022-09-22 02:28:39">2022-09-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/09/21/Docker/" title="Docker"><img src="https://i.imgtg.com/2022/09/22/gytPX.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Docker"/></a><div class="content"><a class="title" href="/2022/09/21/Docker/" title="Docker">Docker</a><time datetime="2022-09-21T15:35:40.000Z" title="发表于 2022-09-21 23:35:40">2022-09-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/09/21/Python%20%E7%88%AC%E8%99%AB/" title="Python 爬虫"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Python 爬虫"/></a><div class="content"><a class="title" href="/2022/09/21/Python%20%E7%88%AC%E8%99%AB/" title="Python 爬虫">Python 爬虫</a><time datetime="2022-09-21T09:35:40.000Z" title="发表于 2022-09-21 17:35:40">2022-09-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/09/21/%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BALNMP%E7%8E%AF%E5%A2%83/" title="快速搭建LNMP环境"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="快速搭建LNMP环境"/></a><div class="content"><a class="title" href="/2022/09/21/%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BALNMP%E7%8E%AF%E5%A2%83/" title="快速搭建LNMP环境">快速搭建LNMP环境</a><time datetime="2022-09-21T09:35:40.000Z" title="发表于 2022-09-21 17:35:40">2022-09-21</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By Terry Ming</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><div class="js-pjax"></div><canvas class="fireworks" mobile="true"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/fireworks.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-heart.min.js" async="async" mobile="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
